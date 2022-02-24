@@ -1,3 +1,5 @@
+const uuid = require('uuid').v4;
+
 const DUMMY_PLACES = require('../data/places');
 const AppError = require('../errors/app-error');
 
@@ -20,6 +22,18 @@ exports.getPlace = (req, res, next) => {
 
   res.json({
     message: 'Place fetched successfully',
+    place: place,
+  });
+};
+
+exports.createPlace = (req, res, next) => {
+  const place = req.body;
+  place.id = uuid();
+
+  DUMMY_PLACES.push(place);
+
+  res.status(201).json({
+    message: 'Place created successfully',
     place: place,
   });
 };
