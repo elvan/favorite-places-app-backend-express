@@ -1,0 +1,32 @@
+{
+  "name": "favorite-places-app-backend-express",
+  "version": "0.7.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elvan/favorite-places-app-backend-express.git"
+  },
+  "keywords": [],
+  "author": "Elvan Hidayat <elvanhd@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elvan/favorite-places-app-backend-express/issues"
+  },
+  "homepage": "https://github.com/elvan/favorite-places-app-backend-express#readme",
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.2",
+    "@types/express": "^4.17.13",
+    "nodemon": "^2.0.15"
+  }
+}
