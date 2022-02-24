@@ -1,8 +1,8 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 
-const placeRouter = require('./routers/placeRouter');
-const userRouter = require('./routers/userRouter');
+const placeRouter = require('./routers/place-router');
+const userRouter = require('./routers/user-router');
 
 const app = express();
 

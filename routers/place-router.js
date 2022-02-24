@@ -2,6 +2,8 @@ const express = require('express');
 
 const router = express.Router();
 
+const AppError = require('../errors/app-error');
+
 const places = [
   {
     id: 'p1',
@@ -46,8 +48,7 @@ router.get('/p/:placeId', (req, res, next) => {
   const place = places.find((p) => p.id === placeId);
 
   if (!place) {
-    const error = new Error('Place not found');
-    error.status = 404;
+    const error = new AppError('Place not found', 404);
     return next(error);
   }
 
@@ -62,8 +63,7 @@ router.get('/u/:userId', (req, res, next) => {
   const userPlaces = places.filter((p) => p.creator === userId);
 
   if (!userPlaces || userPlaces.length === 0) {
-    const error = new Error('User has no places');
-    error.status = 404;
+    const error = new AppError('User has no places', 404);
     return next(error);
   }
 
