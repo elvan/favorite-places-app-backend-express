@@ -36,21 +36,41 @@ const places = [
 router.get('/p', (req, res) => {
   res.json({
     message: 'Places retrieved successfully',
+    placeCount: places.length,
     places: places,
   });
 });
 
-router.get('/p/:placeId', (req, res) => {
+router.get('/p/:placeId', (req, res, next) => {
+  const placeId = req.params.placeId;
+  const place = places.find((p) => p.id === placeId);
+
+  if (!place) {
+    const error = new Error('Place not found');
+    error.status = 404;
+    return next(error);
+  }
+
   res.json({
     message: 'Place fetched successfully',
-    place: places.find((place) => place.id === req.params.placeId),
+    place: place,
   });
 });
 
-router.get('/u/:userId', (req, res) => {
+router.get('/u/:userId', (req, res, next) => {
+  const userId = req.params.userId;
+  const userPlaces = places.filter((p) => p.creator === userId);
+
+  if (!userPlaces || userPlaces.length === 0) {
+    const error = new Error('User has no places');
+    error.status = 404;
+    return next(error);
+  }
+
   res.json({
     message: 'Places fetched successfully',
-    places: places.filter((place) => place.creator === req.params.userId),
+    placeCount: userPlaces.length,
+    places: userPlaces,
   });
 });
 
