@@ -2,21 +2,48 @@ const express = require('express');
 
 const router = express.Router();
 
+const places = [
+  {
+    id: 'p1',
+    title: 'One57',
+    description:
+      'One57, formerly known as Carnegie 57, is a 75-story, 1,005 ft (306 m) supertall skyscraper in the Midtown neighborhood of Manhattan in New York City',
+    image:
+      'https://en.wikipedia.org/wiki/File:One57_from_Columbus_Circle,_May_2014.png',
+    address: '157 West 57th Street Manhattan, New York, US',
+    location: {
+      lat: 40.765556,
+      lng: -73.979167,
+    },
+    creator: 'u1',
+  },
+  {
+    id: 'p2',
+    title: 'Empire State Building',
+    description:
+      'The Empire State Building is a 102-story skyscraper located in Midtown Manhattan in New York City',
+    image:
+      'https://en.wikipedia.org/wiki/File:Empire_State_Building_from_the_Top_of_the_Rooftop.jpg',
+    address: '350 5th Avenue, New York, US',
+    location: {
+      lat: 40.7484405,
+      lng: -73.9856646,
+    },
+    creator: 'u2',
+  },
+];
+
 router.get('/', (req, res) => {
   res.json({
-    message: 'Place Router',
-    places: [
-      {
-        name: 'Place 1',
-        description: 'Description 1',
-        image:
-          'https://images.unsplash.com/photo-1624965085151-0710f6b3f284?crop=entropy&cs=tinysrgb&fit=crop&fm=jpg&h=450&ixid=MnwxfDB8MXxyYW5kb218MHx8cGxhY2VzfHx8fHx8MTY0NTc0MTA1Mw&ixlib=rb-1.2.1&q=80&utm_campaign=api-credit&utm_medium=referral&utm_source=unsplash_source&w=450',
-        location: {
-          lat: -34.397,
-          lng: 150.644,
-        },
-      },
-    ],
+    message: 'Places retrieved successfully',
+    places: places,
+  });
+});
+
+router.get('/:placeId', (req, res) => {
+  res.json({
+    message: 'Place fetched successfully',
+    place: places.find((place) => place.id === req.params.placeId),
   });
 });
 
