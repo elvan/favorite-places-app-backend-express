@@ -33,17 +33,24 @@ const places = [
   },
 ];
 
-router.get('/', (req, res) => {
+router.get('/p', (req, res) => {
   res.json({
     message: 'Places retrieved successfully',
     places: places,
   });
 });
 
-router.get('/:placeId', (req, res) => {
+router.get('/p/:placeId', (req, res) => {
   res.json({
     message: 'Place fetched successfully',
     place: places.find((place) => place.id === req.params.placeId),
+  });
+});
+
+router.get('/u/:userId', (req, res) => {
+  res.json({
+    message: 'Places fetched successfully',
+    places: places.filter((place) => place.creator === req.params.userId),
   });
 });
 
