@@ -37,3 +37,29 @@ exports.createPlace = (req, res, next) => {
     place: place,
   });
 };
+
+exports.updatePlace = (req, res, next) => {
+  const placeId = req.params.placeId;
+  const place = { ...DUMMY_PLACES.find((p) => p.id === placeId) };
+  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
+
+  if (!place) {
+    const error = new AppError('Place not found', 404);
+    return next(error);
+  }
+
+  place.title = req.body.title ?? place.title;
+  place.description = req.body.description ?? place.description;
+  place.imageUrl = req.body.imageUrl ?? place.imageUrl;
+  place.address = req.body.address ?? place.address;
+  place.location = req.body.location ?? place.location;
+
+  if (placeIndex !== -1) {
+    DUMMY_PLACES[placeIndex] = place;
+  }
+
+  res.status(200).json({
+    message: 'Place updated successfully',
+    place: place,
+  });
+};
