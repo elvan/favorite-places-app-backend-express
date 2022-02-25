@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 
+const AppError = require('./errors/app-error');
 const placeRouter = require('./routers/place-router');
 const userRouter = require('./routers/user-router');
 
@@ -17,6 +18,12 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRouter);
 app.use('/api/places', placeRouter);
+
+// Not found
+app.use((req, res, next) => {
+  const error = new AppError('Route not found', 404);
+  throw error;
+});
 
 // Error handling
 app.use((error, req, res, next) => {
