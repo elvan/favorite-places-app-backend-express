@@ -7,16 +7,21 @@ const {
   registerUser,
   loginUser,
 } = require('../controllers/user-controller');
-const { validateRequest } = require('../controllers/utils/validate-request');
+const { validateRequest } = require('../utils/validate-request');
 
 const router = express.Router();
 
 router.post(
   '/register',
   [
-    check('name').isLength({ min: 2 }),
-    check('email').isEmail(),
-    check('password').isLength({ min: 6 }),
+    check('name').not().isEmpty().withMessage('Name must not be empty'),
+    check('email')
+      .normalizeEmail()
+      .isEmail()
+      .withMessage('Email must be a valid email address'),
+    check('password')
+      .isLength({ min: 6 })
+      .withMessage('Password must be at least 6 characters long'),
   ],
   validateRequest,
   registerUser
@@ -24,7 +29,15 @@ router.post(
 
 router.post(
   '/login',
-  [check('email').isEmail(), check('password').isLength({ min: 6 })],
+  [
+    check('email')
+      .normalizeEmail()
+      .isEmail()
+      .withMessage('Email must be a valid email address'),
+    check('password')
+      .isLength({ min: 6 })
+      .withMessage('Password must be at least 6 characters long'),
+  ],
   validateRequest,
   loginUser
 );

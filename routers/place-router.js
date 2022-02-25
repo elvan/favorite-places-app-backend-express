@@ -8,7 +8,7 @@ const {
   updatePlace,
   deletePlace,
 } = require('../controllers/place-controller');
-const { validateRequest } = require('../controllers/utils/validate-request');
+const { validateRequest } = require('../utils/validate-request');
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.post(
   '/',
   [
     check('title').trim().isLength({ min: 5, max: 100 }),
-    check('description').trim().isLength({ min: 5, max: 1000 }),
+    check('description').trim().isLength({ min: 5, max: 500 }),
     check('address').trim().isLength({ min: 5, max: 500 }),
   ],
   validateRequest,
@@ -31,7 +31,7 @@ router.put(
   '/:placeId',
   [
     check('title').trim().isLength({ min: 5, max: 100 }),
-    check('description').trim().isLength({ min: 5, max: 1000 }),
+    check('description').trim().isLength({ min: 5, max: 500 }),
     check('address').trim().isLength({ min: 5, max: 500 }),
   ],
   validateRequest,
