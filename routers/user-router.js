@@ -1,4 +1,5 @@
 const express = require('express');
+const { check } = require('express-validator');
 
 const {
   listUsers,
@@ -6,12 +7,27 @@ const {
   registerUser,
   loginUser,
 } = require('../controllers/user-controller');
+const { validateRequest } = require('../controllers/utils/validate-request');
 
 const router = express.Router();
 
-router.post('/register', registerUser);
+router.post(
+  '/register',
+  [
+    check('name').isLength({ min: 2 }),
+    check('email').isEmail(),
+    check('password').isLength({ min: 6 }),
+  ],
+  validateRequest,
+  registerUser
+);
 
-router.post('/login', loginUser);
+router.post(
+  '/login',
+  [check('email').isEmail(), check('password').isLength({ min: 6 })],
+  validateRequest,
+  loginUser
+);
 
 router.get('/', listUsers);
 

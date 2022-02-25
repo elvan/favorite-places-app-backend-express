@@ -1,5 +1,6 @@
 const uuid = require('uuid').v4;
 
+const { validationResult } = require('express-validator');
 const DUMMY_PLACES = require('../data/places');
 const DUMMY_USERS = require('../data/users');
 const AppError = require('../errors/app-error');
