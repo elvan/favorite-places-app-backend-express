@@ -13,7 +13,7 @@ exports.listUsers = (req, res) => {
   });
 };
 
-exports.getUser = (req, res, next) => {
+exports.getUserPlaces = (req, res, next) => {
   const userId = req.params.userId;
   const userPlaces = DUMMY_PLACES.filter((p) => p.creator === userId);
 
