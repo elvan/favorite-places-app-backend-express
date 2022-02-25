@@ -5,6 +5,7 @@ const {
   getPlace,
   createPlace,
   updatePlace,
+  deletePlace,
 } = require('../controllers/place-controller');
 
 const router = express.Router();
@@ -16,5 +17,7 @@ router.get('/:placeId', getPlace);
 router.post('/', createPlace);
 
 router.put('/:placeId', updatePlace);
+
+router.delete('/:placeId', deletePlace);
 
 module.exports = router;
