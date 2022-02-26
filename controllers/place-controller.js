@@ -1,4 +1,3 @@
-const DUMMY_PLACES = require('../data/places');
 const AppError = require('../errors/app-error');
 const Place = require('../models/place');
 
