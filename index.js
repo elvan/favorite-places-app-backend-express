@@ -1,9 +1,18 @@
 const bodyParser = require('body-parser');
+const dotenv = require('dotenv');
 const express = require('express');
+const mongoose = require('mongoose');
 
 const AppError = require('./errors/app-error');
 const placeRouter = require('./routers/place-router');
 const userRouter = require('./routers/user-router');
+
+dotenv.config();
+
+const PORT = process.env.PORT || 5000;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const MONGODB_SERVER =
+  process.env.MONGODB_SERVER || 'mongodb://localhost:27017/favorite-places-app';
 
 const app = express();
 
@@ -43,6 +52,19 @@ app.use((error, req, res, next) => {
   });
 });
 
-app.listen(5000, () => {
-  console.log('Server is running on port 5000');
-});
+mongoose
+  .connect(MONGODB_SERVER, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+  })
+  .then(() => {
+    console.log(`Connected to MongoDB at ${MONGODB_SERVER}`);
+
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT} in ${NODE_ENV} mode`);
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });
