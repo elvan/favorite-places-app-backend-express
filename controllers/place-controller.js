@@ -10,17 +10,25 @@ exports.listPlaces = (req, res) => {
   });
 };
 
-exports.getPlace = (req, res, next) => {
+exports.getPlace = async (req, res, next) => {
   const placeId = req.params.placeId;
-  const place = DUMMY_PLACES.find((p) => p.id === placeId);
+  let place;
+
+  try {
+    place = await Place.findById(placeId);
+  } catch (err) {
+    console.log(err);
+    const error = new AppError('Fetching place failed', 500);
+    return next(error);
+  }
 
   if (!place) {
     const error = new AppError('Place not found', 404);
     return next(error);
   }
 
-  res.json({
-    message: 'Place fetched successfully',
+  res.status(200).json({
+    message: 'Place retrieved successfully',
     place: place,
   });
 };
