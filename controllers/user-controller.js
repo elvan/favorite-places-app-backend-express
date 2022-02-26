@@ -1,4 +1,3 @@
-const DUMMY_USERS = require('../data/users');
 const AppError = require('../errors/app-error');
 const Place = require('../models/place');
 const User = require('../models/user');
@@ -21,7 +20,7 @@ exports.registerUser = async (req, res, next) => {
 
     const createdUser = await User.create(newUser);
 
-    res.json({
+    return res.json({
       message: 'User created successfully',
       user: createdUser,
     });
@@ -38,7 +37,7 @@ exports.loginUser = async (req, res, next) => {
       return next(new AppError('Invalid email or password', 401));
     }
 
-    res.json({
+    return res.json({
       message: 'User logged in successfully',
       name: existingUser.name,
       email: existingUser.email,
@@ -48,12 +47,22 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
-exports.listUsers = (req, res) => {
-  res.json({
-    message: 'User Router',
-    userCount: DUMMY_USERS.length,
-    users: DUMMY_USERS,
-  });
+exports.listUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({}, '-password');
+
+    if (!users || users.length === 0) {
+      return next(new AppError('No users found', 404));
+    }
+
+    return res.json({
+      message: 'Users fetched successfully',
+      userCount: users.length,
+      users,
+    });
+  } catch (error) {
+    return next(new AppError(error, 500));
+  }
 };
 
 exports.listUserPlaces = async (req, res, next) => {
