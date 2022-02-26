@@ -72,18 +72,23 @@ exports.updatePlace = async (req, res, next) => {
   }
 };
 
-exports.deletePlace = (req, res, next) => {
+exports.deletePlace = async (req, res, next) => {
   const placeId = req.params.placeId;
-  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
 
-  if (placeIndex === -1) {
-    const error = new AppError('Place not found', 404);
-    return next(error);
+  try {
+    const place = await Place.findById(placeId);
+
+    if (!place) {
+      const error = new AppError('Place not found', 404);
+      return next(error);
+    }
+
+    await place.remove();
+
+    res.status(200).json({
+      message: 'Place deleted successfully',
+    });
+  } catch (error) {
+    return next(new AppError(error, 500));
   }
-
-  DUMMY_PLACES.splice(placeIndex, 1);
-
-  res.status(200).json({
-    message: 'Place deleted successfully',
-  });
 };
