@@ -4,20 +4,18 @@ const Place = require('../models/place');
 const User = require('../models/user');
 
 exports.registerUser = async (req, res, next) => {
-  const user = req.body;
-
   try {
-    const existingUser = await User.findOne({ email: user.email });
+    const existingUser = await User.findOne({ email: req.body.email });
 
     if (existingUser) {
       return next(new AppError('User already exists', 422));
     }
 
     const newUser = {
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      imageUrl: user.imageUrl,
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      imageUrl: req.body.imageUrl,
       places: [],
     };
 
@@ -32,18 +30,22 @@ exports.registerUser = async (req, res, next) => {
   }
 };
 
-exports.loginUser = (req, res, next) => {
-  const user = DUMMY_USERS.find((u) => u.email === req.body.email);
+exports.loginUser = async (req, res, next) => {
+  try {
+    const existingUser = await User.findOne({ email: req.body.email });
 
-  if (!user) {
-    const error = new AppError('User not found', 404);
-    return next(error);
+    if (!existingUser || existingUser.password !== req.body.password) {
+      return next(new AppError('Invalid email or password', 401));
+    }
+
+    res.json({
+      message: 'User logged in successfully',
+      name: existingUser.name,
+      email: existingUser.email,
+    });
+  } catch (error) {
+    return next(new AppError(error, 500));
   }
-
-  res.json({
-    message: 'User logged in successfully',
-    user: user,
-  });
 };
 
 exports.listUsers = (req, res) => {
