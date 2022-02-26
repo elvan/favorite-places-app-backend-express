@@ -1,8 +1,6 @@
-const uuid = require('uuid').v4;
-
-const { validationResult } = require('express-validator');
 const DUMMY_PLACES = require('../data/places');
 const AppError = require('../errors/app-error');
+const Place = require('../models/place');
 
 exports.listPlaces = (req, res) => {
   res.json({
@@ -27,11 +25,23 @@ exports.getPlace = (req, res, next) => {
   });
 };
 
-exports.createPlace = (req, res, next) => {
-  const place = req.body;
-  place.id = uuid();
+exports.createPlace = async (req, res, next) => {
+  const place = new Place({
+    title: req.body.title,
+    description: req.body.description,
+    imageUrl: req.body.imageUrl,
+    address: req.body.address,
+    location: req.body.location,
+    creator: req.body.creator,
+  });
 
-  DUMMY_PLACES.push(place);
+  try {
+    await place.save();
+  } catch (err) {
+    console.log(err);
+    const error = new AppError('Creating place failed', 500);
+    return next(error);
+  }
 
   res.status(201).json({
     message: 'Place created successfully',
