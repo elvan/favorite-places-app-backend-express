@@ -2,10 +2,10 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const {
-  listUsers,
-  listUserPlaces,
   registerUser,
   loginUser,
+  listUsers,
+  listUserPlaces,
 } = require('../controllers/user-controller');
 const { validateRequest } = require('../utils/validate-request');
 

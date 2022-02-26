@@ -2,7 +2,6 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const {
-  listPlaces,
   getPlace,
   createPlace,
   updatePlace,
@@ -11,8 +10,6 @@ const {
 const { validateRequest } = require('../utils/validate-request');
 
 const router = express.Router();
-
-router.get('/', listPlaces);
 
 router.get('/:placeId', getPlace);
 

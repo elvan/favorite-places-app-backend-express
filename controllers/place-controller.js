@@ -2,14 +2,6 @@ const DUMMY_PLACES = require('../data/places');
 const AppError = require('../errors/app-error');
 const Place = require('../models/place');
 
-exports.listPlaces = (req, res) => {
-  res.json({
-    message: 'Places retrieved successfully',
-    placeCount: DUMMY_PLACES.length,
-    places: DUMMY_PLACES,
-  });
-};
-
 exports.getPlace = async (req, res, next) => {
   const placeId = req.params.placeId;
   let place;

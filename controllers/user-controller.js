@@ -1,9 +1,8 @@
 const uuid = require('uuid').v4;
 
-const { validationResult } = require('express-validator');
-const DUMMY_PLACES = require('../data/places');
 const DUMMY_USERS = require('../data/users');
 const AppError = require('../errors/app-error');
+const Place = require('../models/place');
 
 exports.registerUser = (req, res, next) => {
   const user = req.body;
@@ -43,9 +42,15 @@ exports.listUsers = (req, res) => {
   });
 };
 
-exports.listUserPlaces = (req, res, next) => {
+exports.listUserPlaces = async (req, res, next) => {
   const userId = req.params.userId;
-  const userPlaces = DUMMY_PLACES.filter((p) => p.creator === userId);
+  let userPlaces = [];
+
+  try {
+    userPlaces = await Place.find({ creator: userId });
+  } catch (error) {
+    return next(new AppError(error, 500));
+  }
 
   if (!userPlaces || userPlaces.length === 0) {
     const error = new AppError('User has no places', 404);
