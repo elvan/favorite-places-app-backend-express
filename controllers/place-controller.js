@@ -4,25 +4,22 @@ const Place = require('../models/place');
 
 exports.getPlace = async (req, res, next) => {
   const placeId = req.params.placeId;
-  let place;
 
   try {
-    place = await Place.findById(placeId);
-  } catch (err) {
-    console.log(err);
-    const error = new AppError('Fetching place failed', 500);
-    return next(error);
-  }
+    const place = await Place.findById(placeId);
 
-  if (!place) {
-    const error = new AppError('Place not found', 404);
-    return next(error);
-  }
+    if (!place) {
+      const error = new AppError('Place not found', 404);
+      return next(error);
+    }
 
-  res.status(200).json({
-    message: 'Place retrieved successfully',
-    place: place,
-  });
+    res.status(200).json({
+      message: 'Place retrieved successfully',
+      place: place,
+    });
+  } catch (error) {
+    return next(new AppError(error, 500));
+  }
 };
 
 exports.createPlace = async (req, res, next) => {
@@ -37,10 +34,8 @@ exports.createPlace = async (req, res, next) => {
 
   try {
     await place.save();
-  } catch (err) {
-    console.log(err);
-    const error = new AppError('Creating place failed', 500);
-    return next(error);
+  } catch (error) {
+    return next(new AppError(error, 500));
   }
 
   res.status(201).json({
@@ -49,30 +44,32 @@ exports.createPlace = async (req, res, next) => {
   });
 };
 
-exports.updatePlace = (req, res, next) => {
+exports.updatePlace = async (req, res, next) => {
   const placeId = req.params.placeId;
-  const place = { ...DUMMY_PLACES.find((p) => p.id === placeId) };
-  const placeIndex = DUMMY_PLACES.findIndex((p) => p.id === placeId);
 
-  if (!place) {
-    const error = new AppError('Place not found', 404);
-    return next(error);
+  try {
+    const place = await Place.findById(placeId);
+
+    if (!place) {
+      const error = new AppError('Place not found', 404);
+      return next(error);
+    }
+
+    place.title = req.body.title ?? place.title;
+    place.description = req.body.description ?? place.description;
+    place.imageUrl = req.body.imageUrl ?? place.imageUrl;
+    place.address = req.body.address ?? place.address;
+    place.location = req.body.location ?? place.location;
+
+    await place.save();
+
+    res.status(200).json({
+      message: 'Place updated successfully',
+      place: place,
+    });
+  } catch (error) {
+    return next(new AppError(error, 500));
   }
-
-  place.title = req.body.title ?? place.title;
-  place.description = req.body.description ?? place.description;
-  place.imageUrl = req.body.imageUrl ?? place.imageUrl;
-  place.address = req.body.address ?? place.address;
-  place.location = req.body.location ?? place.location;
-
-  if (placeIndex !== -1) {
-    DUMMY_PLACES[placeIndex] = place;
-  }
-
-  res.status(200).json({
-    message: 'Place updated successfully',
-    place: place,
-  });
 };
 
 exports.deletePlace = (req, res, next) => {
