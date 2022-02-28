@@ -1,5 +1,7 @@
+const mongoose = require('mongoose');
 const AppError = require('../errors/app-error');
 const Place = require('../models/place');
+const User = require('../models/user');
 
 exports.getPlace = async (req, res, next) => {
   const placeId = req.params.placeId;
@@ -28,19 +30,32 @@ exports.createPlace = async (req, res, next) => {
     imageUrl: req.body.imageUrl,
     address: req.body.address,
     location: req.body.location,
-    creator: req.body.creator,
   });
 
   try {
-    await place.save();
+    const user = await User.findById(req.body.creator);
+
+    if (!user) {
+      return next(new AppError('User not found', 404));
+    }
+
+    place.creator = user._id;
+
+    const session = await mongoose.startSession();
+
+    session.startTransaction();
+    await place.save({ session: session });
+    await user.places.push(place);
+    await user.save({ session: session });
+    await session.commitTransaction();
+
+    res.status(201).json({
+      message: 'Place created successfully',
+      place: place,
+    });
   } catch (error) {
     return next(new AppError(error, 500));
   }
-
-  res.status(201).json({
-    message: 'Place created successfully',
-    place: place,
-  });
 };
 
 exports.updatePlace = async (req, res, next) => {
