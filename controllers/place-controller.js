@@ -10,11 +10,10 @@ exports.getPlace = async (req, res, next) => {
     const place = await Place.findById(placeId);
 
     if (!place) {
-      const error = new AppError('Place not found', 404);
-      return next(error);
+      return next(new AppError('Place not found', 404));
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: 'Place retrieved successfully',
       place: place,
     });
@@ -49,7 +48,7 @@ exports.createPlace = async (req, res, next) => {
     await user.save({ session: session });
     await session.commitTransaction();
 
-    res.status(201).json({
+    return res.status(201).json({
       message: 'Place created successfully',
       place: place,
     });
@@ -65,8 +64,7 @@ exports.updatePlace = async (req, res, next) => {
     const place = await Place.findById(placeId);
 
     if (!place) {
-      const error = new AppError('Place not found', 404);
-      return next(error);
+      return next(new AppError('Place not found', 404));
     }
 
     place.title = req.body.title ?? place.title;
@@ -77,7 +75,7 @@ exports.updatePlace = async (req, res, next) => {
 
     await place.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       message: 'Place updated successfully',
       place: place,
     });
@@ -90,16 +88,21 @@ exports.deletePlace = async (req, res, next) => {
   const placeId = req.params.placeId;
 
   try {
-    const place = await Place.findById(placeId);
+    const place = await Place.findById(placeId).populate('creator');
 
     if (!place) {
-      const error = new AppError('Place not found', 404);
-      return next(error);
+      return next(new AppError('Place not found', 404));
     }
 
-    await place.remove();
+    const session = await mongoose.startSession();
 
-    res.status(200).json({
+    session.startTransaction();
+    await place.remove({ session: session });
+    await place.creator.places.pull(place);
+    await place.creator.save({ session: session });
+    await session.commitTransaction();
+
+    return res.status(200).json({
       message: 'Place deleted successfully',
     });
   } catch (error) {
