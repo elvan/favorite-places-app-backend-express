@@ -19,6 +19,20 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 
+// CORS
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, Origin, X-Requested-With, Accept'
+  );
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'OPTIONS, GET, POST, PUT, PATCH, DELETE'
+  );
+  next();
+});
+
 // Routes
 
 app.get('/', (req, res) => {
@@ -53,10 +67,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(MONGODB_SERVER, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(MONGODB_SERVER, {})
   .then(() => {
     console.log(`Connected to MongoDB at ${MONGODB_SERVER}`);
 
